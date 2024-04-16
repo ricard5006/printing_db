@@ -432,7 +432,7 @@ namespace indigo_ap
                 }
             }
             else {
-                MessageBox.Show("Formato de impresion no encontrado", "Indigo Apps - light applications");
+                MessageBox.Show("Formato de impresion no encontrado", "Indigo Apps - light applications ");
             }
             log.LogWrite("Cantidad impresa: "+cant_log.ToString());
             return prn_salida;
