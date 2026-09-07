@@ -38,7 +38,7 @@ namespace indigo_ap
         //}
 
         public conexion() {
-
+            log = new LogWriter();
             conn = new SqlConnection();
             conn.ConnectionString = (@"Server=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|indigo_app.mdf; Integrated Security=True;");
 
@@ -113,7 +113,7 @@ namespace indigo_ap
 
             } catch (SqlException ex) {
                 Console.WriteLine("Error [insertar_datos]: " + ex.Message);
-                log.LogWrite("Error [insertar_datos]: " + ex.Message);
+                log.LogWrite("Error [insertar_datos]: " + ex.Message.ToString());
             }
             
 
@@ -133,7 +133,7 @@ namespace indigo_ap
             catch (SqlException ex)
             {
                 Console.WriteLine("Error [insertar_datos]: " + ex.Message);
-                log.LogWrite("Error [insertar_datos]: " + ex.Message);
+                log.LogWrite("Error [insertar_datos]: " + ex.Message.ToString());
             }
 
 
@@ -188,7 +188,7 @@ namespace indigo_ap
             {
 
                 Console.WriteLine("Error [truncate]: " + ex.Message);
-                log.LogWrite("Error [truncate]: " + ex.Message);
+                log.LogWrite("Error [truncate]: " + ex.Message.ToString());
             }
 
         }
@@ -208,7 +208,7 @@ namespace indigo_ap
             {
                 
                 Console.WriteLine("Error [custom_query]: " + ex.Message);
-                log.LogWrite("Error [custom_query]: " + ex.Message);
+                log.LogWrite("Error [custom_query]: " + ex.Message.ToString());
             }
 
 
@@ -232,7 +232,7 @@ namespace indigo_ap
             {
                 
                 Console.WriteLine("Error [select_custom]: " + ex.Message);
-                log.LogWrite("Error [select_custom]: " + ex.Message);
+                log.LogWrite("Error [select_custom]: " + ex.Message.ToString());
             }
 
             return dt;

@@ -178,10 +178,10 @@ namespace indigo_ap
             var qry = "";
             var column_name2 = "";
             for (int x = 0; x < dgvData.Columns.Count; x++ ) {
-                column_name = dgvData.Columns[x].Name.ToString().Replace(' ','_');
+                column_name = dgvData.Columns[x].Name.ToString();
                 con.insertar_datos("t002_campos (f002_nombre,f002_valor)", "'"+ column_name + "', 'text'");
                 column_name2 += column_name;
-                qry += ","+column_name + " nvarchar(500) ";
+                qry += ",["+column_name + "] nvarchar(500) ";
             }
 
             //crear tabla custom para insertar datos del archivo
@@ -214,8 +214,9 @@ namespace indigo_ap
                 column_name = "";
                 for (int x = 0; x < dgvData.Columns.Count; x++)
                 {
-                    column_name += dgvData.Columns[x].Name.ToString().Replace(' ', '_');
+                    column_name += "["+dgvData.Columns[x].Name.ToString()+"]";
 
+                    
                     if (x == dgvData.Columns.Count - 1)
                     {
                         column_name += ")";
@@ -224,6 +225,7 @@ namespace indigo_ap
                     {
                         column_name += ",";
                     }
+                    
 
                 }
 
@@ -322,7 +324,7 @@ namespace indigo_ap
 
             dgvImpresion.Columns.Clear();
 
-            dgvImpresion.DataSource = conn.select_custom("select * from t003_custom where " + cmb_campos.SelectedValue.ToString() + " like '%" + tb_buscar.Text.ToString() + "%'");
+            dgvImpresion.DataSource = conn.select_custom("select * from t003_custom where [" + cmb_campos.SelectedValue.ToString() + "] like '%" + tb_buscar.Text.ToString() + "%'");
 
             conn.desconectar();
 

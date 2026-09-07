@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "indigo_ap", "indigo_ap\indigo_ap.csproj", "{6F26F005-E553-432B-8679-730C34E7E7B2}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_indigo", "Setup_indigo\Setup_indigo.vdproj", "{83715BA3-1859-4F45-9B5A-DEE62A6767AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{6F26F005-E553-432B-8679-730C34E7E7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F26F005-E553-432B-8679-730C34E7E7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F26F005-E553-432B-8679-730C34E7E7B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83715BA3-1859-4F45-9B5A-DEE62A6767AC}.Debug|Any CPU.ActiveCfg = Debug
+		{83715BA3-1859-4F45-9B5A-DEE62A6767AC}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
