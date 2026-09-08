@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,6 @@ namespace indigo_ap
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             this.Close();
-            Form1 frm = new Form1();
-            frm.Focus();
         }
 
         private void custom_prn_Load(object sender, EventArgs e)
@@ -37,14 +36,13 @@ namespace indigo_ap
             try
             {
 
-                conexion con = new conexion();
-                con.conectar();
-
-                cmb_prn.DataSource = con.select_custom("select f004_nombre_formato from t004_formatos;");
-                cmb_prn.DisplayMember = "f004_nombre_formato";
-                cmb_prn.ValueMember = "f004_nombre_formato";
-
-                con.desconectar();
+                using (conexion con = new conexion())
+                {
+                    con.conectar();
+                    cmb_prn.DataSource = con.select_custom("select f004_nombre_formato from t004_formatos;");
+                    cmb_prn.DisplayMember = "f004_nombre_formato";
+                    cmb_prn.ValueMember = "f004_nombre_formato";
+                }
 
 
             }
@@ -60,18 +58,20 @@ namespace indigo_ap
 
             try
             {
-                conexion conn = new conexion();
-            conn.conectar();
-            DataTable dt = new DataTable();
-            dt = conn.select_custom("select f002_nombre from t002_campos;");
-            conn.desconectar();
+                using (conexion conn = new conexion())
+                {
+                    conn.conectar();
+                    DataTable dt = new DataTable();
+                    dt = conn.select_custom("select f002_nombre from t002_campos;");
 
-            if (dt.Rows.Count > 0) {
-                for (int i=0; i < dt.Rows.Count;i++) {
-
-                    tb_campos.Text += "$" + dt.Rows[i][0].ToString() + "$ \r\n";
+                    if (dt.Rows.Count > 0)
+                    {
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            tb_campos.Text += "$" + dt.Rows[i][0].ToString() + "$ \r\n";
+                        }
+                    }
                 }
-            }
 
             }
             catch (Exception ex)
@@ -88,30 +88,31 @@ namespace indigo_ap
             try
             {
 
-                conexion con = new conexion();
-                con.conectar();
+                using (conexion con = new conexion())
+                {
+                    con.conectar();
 
-                if (cmb_prn.FindStringExact(cmb_prn.Text.ToString()) >= 0) {
+                    if (cmb_prn.FindStringExact(cmb_prn.Text.ToString()) >= 0)
+                    {
+                        con.update_datos("t004_formatos",
+                            new string[] { "f004_formato" },
+                            new object[] { tb_prn.Text },
+                            "f004_nombre_formato = @w0",
+                            new object[] { cmb_prn.Text });
+                        MessageBox.Show("Formato actualizado", "Indigo Apps - light applications");
+                    }
+                    else
+                    {
+                        con.insertar_datos("t004_formatos",
+                            new string[] { "f004_nombre_formato", "f004_formato" },
+                            new object[] { cmb_prn.Text, tb_prn.Text });
+                        MessageBox.Show("Formato nuevo almacenado", "Indigo Apps - light applications");
+                    }
 
-                    con.update_datos("t004_formatos", "f004_formato = '" + tb_prn.Text.ToString() + "' where f004_nombre_formato = '" + cmb_prn.Text.ToString() + "'");
-                    MessageBox.Show("Formato actualizado", "Indigo Apps - light applications");
-
-                }else {
-                    con.insertar_datos("t004_formatos (f004_nombre_formato,f004_formato) ","'" + cmb_prn.Text.ToString() + "'" + "," + "'" + tb_prn.Text.ToString() + "'");
-                    MessageBox.Show("Formato nuevo almacenado", "Indigo Apps - light applications");
+                    cmb_prn.DataSource = con.select_custom("select f004_nombre_formato from t004_formatos;");
+                    cmb_prn.DisplayMember = "f004_nombre_formato";
+                    cmb_prn.ValueMember = "f004_nombre_formato";
                 }
-
-                
-
-
-                
-                cmb_prn.DataSource = con.select_custom("select f004_nombre_formato from t004_formatos;");
-                cmb_prn.DisplayMember = "f004_nombre_formato";
-                cmb_prn.ValueMember = "f004_nombre_formato";
-
-
-
-                con.desconectar();
 
 
             }
@@ -131,17 +132,18 @@ namespace indigo_ap
         {
             try
             {
-                conexion con = new conexion();
-                con.conectar();
-                DataTable dt = new DataTable();
-                dt = con.select_custom("select f004_formato from t004_formatos where f004_nombre_formato='" + cmb_prn.Text.ToString() + "' ;");
-
-                if (dt.Rows.Count > 0)
+                using (conexion con = new conexion())
                 {
-                    tb_prn.Text = dt.Rows[0][0].ToString();
-                }
+                    con.conectar();
 
-                con.desconectar();
+                    SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("@formato", cmb_prn.Text) };
+                    DataTable dt = con.select_custom("select f004_formato from t004_formatos where f004_nombre_formato = @formato", parametros);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        tb_prn.Text = dt.Rows[0][0].ToString();
+                    }
+                }
             }
             catch (Exception ex)
             {

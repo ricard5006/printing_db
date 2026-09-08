@@ -22,11 +22,26 @@ namespace indigo_ap
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            if (!conexion.VerificarLocalDB())
+            {
+                MessageBox.Show("No se encontro SQL Server LocalDB en este equipo.\n\n" +
+                    "La aplicacion necesita la instancia (LocalDB)\\MSSQLLocalDB.\n\n" +
+                    "Instale 'SQL Server Express LocalDB' (version 2014 o superior), por ejemplo\n" +
+                    "descargando el instalador SqlLocalDB.msi desde la pagina oficial de Microsoft\n" +
+                    "de SQL Server Express (https://www.microsoft.com/sql-server/sql-server-downloads).\n\n" +
+                    "Vuelva a abrir la aplicacion una vez instalado.",
+                    "Indigo Apps - light applications");
+                return;
+            }
+
+            string dataDir = conexion.ObtenerDirectorioDatos();
+            AppDomain.CurrentDomain.SetData("DataDirectory", dataDir);
+            conexion.PrepararBaseTemplate();
 
             //Application.Run(new activacion());
             //Application.Run(new custom_prn());
 
-            string path = @"Activacion.txt";
+            string path = conexion.ObtenerRutaActivacion();
             if (File.Exists(path))
             {
                 IPHostEntry hostInfo = Dns.GetHostEntry("localhost");
@@ -68,7 +83,7 @@ namespace indigo_ap
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            MessageBox.Show("Error: " + ex.InnerException.ToString());
+            MessageBox.Show("Error: " + (ex.InnerException != null ? ex.InnerException.Message : ex.Message));
         }
 
         public static String getMotherBoardID()

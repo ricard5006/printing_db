@@ -76,7 +76,7 @@ namespace indigo_ap
             string key = stringMd5.GetMd5Hash(cadena);
             if (key == TbActv.Text)
             {
-                using (StreamWriter sw = File.CreateText(@"Activacion.txt"))
+                using (StreamWriter sw = File.CreateText(conexion.ObtenerRutaActivacion()))
                 {
                     sw.WriteLine(key);
                 }
@@ -106,7 +106,7 @@ namespace indigo_ap
 
         private void btnDemo_Click(object sender, EventArgs e)
         {
-            String archivo = @"Activacion.txt";
+            String archivo = conexion.ObtenerRutaActivacion();
             if (File.Exists(archivo))
             {
 
@@ -169,7 +169,7 @@ namespace indigo_ap
         {
             try
             {
-                string path = @"Activacion.txt";
+                string path = conexion.ObtenerRutaActivacion();
                 if (File.Exists(path))
                 {
                     StreamReader reader = new StreamReader(path);

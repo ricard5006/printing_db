@@ -230,6 +230,9 @@
             this.lbl_info.ForeColor = System.Drawing.Color.White;
             this.lbl_info.Name = "lbl_info";
             this.lbl_info.Click += new System.EventHandler(this.lbl_info_Click);
+            this.lbl_info.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbl_info_MouseDown);
+            this.lbl_info.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lbl_info_MouseMove);
+            this.lbl_info.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lbl_info_MouseUp);
             // 
             // printDialog1
             // 

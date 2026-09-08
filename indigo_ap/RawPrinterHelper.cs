@@ -117,17 +117,12 @@ namespace indigo_ap
         }
         public static bool SendStringToPrinter(string szPrinterName, string szString)
         {
-            IntPtr pBytes;
-            Int32 dwCount;
-            // How many characters are in the string?
-            dwCount = szString.Length;
-            // Assume that the printer is expecting ANSI text, and then convert
-            // the string to ANSI text.
-            pBytes = Marshal.StringToCoTaskMemAnsi(szString);
-            // Send the converted ANSI string to the printer.
-            SendBytesToPrinter(szPrinterName, pBytes, dwCount);
-            Marshal.FreeCoTaskMem(pBytes);
-            return true;
+            byte[] bytes = Encoding.Default.GetBytes(szString);
+            IntPtr pUnmanagedBytes = Marshal.AllocCoTaskMem(bytes.Length);
+            Marshal.Copy(bytes, 0, pUnmanagedBytes, bytes.Length);
+            bool bSuccess = SendBytesToPrinter(szPrinterName, pUnmanagedBytes, bytes.Length);
+            Marshal.FreeCoTaskMem(pUnmanagedBytes);
+            return bSuccess;
         }
     }
 }
