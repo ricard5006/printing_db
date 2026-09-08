@@ -14,10 +14,10 @@
 
 1. Descargue el instalador **SqlLocalDB.msi** desde la pagina oficial de
    SQL Server Express:
-   `https://www.microsoft.com/sql-server/sql-server-downloads`
+   `https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi`
 2. Ejecute el archivo descargado y acepte la instalacion con los valores
    predeterminados. No requiere configuracion adicional.
-3. Verifique que la instancia este disponible (desde una consola `cmd` o
+3. Puede verificar que la instancia este disponible (desde una consola `cmd` o
    PowerShell):
 
    ```
@@ -31,7 +31,7 @@
 1. Ejecute el instalador:
 
    ```
-   Setup_indigo\Release\Setup_indigo.msi
+   Setup_indigo.msi
    ```
 
    (doble clic sobre el archivo, y siga el asistente).
@@ -52,11 +52,22 @@
    ```
 
    La carpeta contiene la base de datos `indigo_app.mdf`, el archivo de
-   activacion `Activacion.txt` y el archivo de registro `log.txt`. No hace
-   falta hacer nada: se copian solos desde el instalador.
+   activacion `Activacion.txt` y el archivo de registro `log.txt`. La base
+   de datos se crea automaticamente con la version de LocalDB instalada en
+   el equipo; no hace falta hacer nada.
 
    Nota: programe la activacion utilizada el mismo equipo. La base de datos
    queda vacia (sin datos de impresion previos).
+
+### Problemas conocidos
+
+**Error: "The database ...\INDIGO_APP.MDF cannot be opened because it is
+version XXXX. This server supports version YYYY and earlier."**
+
+Indica que la base existente en `%LocalAppData%\IndigoApps` fue creada con
+una version de LocalDB mas nueva que la instalada en el equipo. Solucion:
+borre los archivos `indigo_app.mdf` e `indigo_app_log.ldf` de esa carpeta y
+vuelva a abrir la aplicacion; esta la regenerara con la version compatible.
 
 ## Actualizar a una version nueva
 
@@ -81,21 +92,3 @@ toca, por lo que se conservan la activacion y los datos almacenados.
    directos. La carpeta de datos `%LocalAppData%\IndigoApps` se conserva
    (si desea eliminarla, borrela manualmente).
 
-## Notas de compilacion (desarrolladores)
-
-- El instalador genera unicamente el archivo `.msi` (sin `setup.exe`), por
-  lo que los requisitos se comprueban con las condiciones del propio MSI.
-- Para compilar por linea de comandos con Visual Studio 2015 es necesario
-  aplicar el workaround de Microsoft para proyectos de instalacion:
-
-  ```
-  reg add "HKCU\SOFTWARE\Microsoft\VisualStudio\14.0_Config\MSBuild" /t REG_DWORD /v EnableOutOfProcBuild /d 0 /f
-  ```
-
-  Y luego:
-
-  ```
-  devenv.com indigo_ap.sln /Build "Release"
-  ```
-
-- El MSI resultante queda en `Setup_indigo\Release\Setup_indigo.msi`.

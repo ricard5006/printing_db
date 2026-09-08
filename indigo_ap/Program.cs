@@ -36,7 +36,7 @@ namespace indigo_ap
 
             string dataDir = conexion.ObtenerDirectorioDatos();
             AppDomain.CurrentDomain.SetData("DataDirectory", dataDir);
-            conexion.PrepararBaseTemplate();
+            conexion.PrepararBase();
 
             //Application.Run(new activacion());
             //Application.Run(new custom_prn());

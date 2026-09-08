@@ -128,13 +128,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="indigo_app.mdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="indigo_app_log.ldf">
-      <DependentUpon>indigo_app.mdf</DependentUpon>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\ila.png" />
     <None Include="Resources\icons8-print-96.png" />
   </ItemGroup>

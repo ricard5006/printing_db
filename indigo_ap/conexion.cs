@@ -286,26 +286,84 @@ namespace indigo_ap
         }
 
         /// <summary>
-        /// Copia el template de base de datos (indigo_app.mdf) instalado junto a la app
-        /// hacia la carpeta de datos del usuario, la primera vez que la aplicacion se ejecuta.
+        /// Prepara la base de datos en la carpeta de datos del usuario.
+        /// Crea la base "indigo_app" (si no existe o es incompatible) con la version
+        /// de la instancia LocalDB instalada, dejando los archivos en la carpeta de
+        /// datos. El resto de la aplicacion se conecta con AttachDbFilename hacia
+        /// ese mismo archivo.
         /// </summary>
-        public static void PrepararBaseTemplate()
+        public static void PrepararBase()
         {
+            const string dbName = "indigo_app";
             string dataDir = ObtenerDirectorioDatos();
-            string destino = Path.Combine(dataDir, "indigo_app.mdf");
-            if (!File.Exists(destino))
-            {
-                string origen = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "indigo_app.mdf");
-                if (File.Exists(origen))
-                {
-                    File.Copy(origen, destino, false);
+            string mdf = Path.Combine(dataDir, "indigo_app.mdf");
+            string ldf = Path.Combine(dataDir, "indigo_app_log.ldf");
 
-                    string ldfOrigen = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "indigo_app_log.ldf");
-                    if (File.Exists(ldfOrigen))
+            const string masterCnn = @"Server=(LocalDB)\MSSQLLocalDB;Database=master;Integrated Security=True;";
+            using (SqlConnection c = new SqlConnection(masterCnn))
+            {
+                c.Open();
+
+                bool existe = false;
+                string rutaActual = null;
+                string verificar = "SELECT physical_name FROM sys.master_files "
+                                 + "WHERE database_id = DB_ID(N'" + dbName + "') AND type = 0;";
+                using (SqlCommand cmd = new SqlCommand(verificar, c))
+                {
+                    object res = cmd.ExecuteScalar();
+                    if (res != null)
                     {
-                        File.Copy(ldfOrigen, Path.Combine(dataDir, "indigo_app_log.ldf"), false);
+                        existe = true;
+                        rutaActual = Convert.ToString(res);
                     }
                 }
+
+                if (existe && string.Equals(rutaActual, mdf, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                if (existe)
+                {
+                    EjecutarBaseDirecto(c, "IF DB_ID(N'" + dbName + "') IS NOT NULL BEGIN "
+                        + "ALTER DATABASE [" + dbName + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; "
+                        + "DROP DATABASE [" + dbName + "]; END");
+                }
+
+                BorrarArchivosBase(mdf, ldf);
+
+                string rutaMdf = mdf.Replace("'", "''");
+                string rutaLdf = ldf.Replace("'", "''");
+                string crear = "CREATE DATABASE [" + dbName + "] "
+                             + "ON (NAME=N'" + dbName + "', FILENAME=N'" + rutaMdf + "') "
+                             + "LOG ON (NAME=N'" + dbName + "_log', FILENAME=N'" + rutaLdf + "');";
+                EjecutarBaseDirecto(c, crear);
+            }
+        }
+
+        private static void EjecutarBaseDirecto(SqlConnection c, string sql)
+        {
+            using (SqlCommand cmd = new SqlCommand(sql, c))
+            {
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static void BorrarArchivosBase(string mdf, string ldf)
+        {
+            try
+            {
+                if (File.Exists(mdf))
+                {
+                    File.Delete(mdf);
+                }
+                if (File.Exists(ldf))
+                {
+                    File.Delete(ldf);
+                }
+            }
+            catch (IOException)
+            {
             }
         }
 
